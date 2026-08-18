@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowUpRight, Play, Eye, Sparkles } from 'lucide-react';
 import { Project } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 interface ProjectCardProps {
   project: Project;
@@ -17,6 +18,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   featured = false,
   projectNumber
 }) => {
+  const { savedMedia } = useAuth();
   const isPortrait = project.aspectRatio === 'portrait' || aspect === 'portrait';
 
   const getAspectClass = () => {
@@ -37,18 +39,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
   const isReel = project.category === 'Social Media Reels' || aspect === 'vertical';
   
-  // Check if user uploaded a custom logo for slot 01 in this session/browser
-  const [customImg, setCustomImg] = React.useState<string | null>(null);
-  React.useEffect(() => {
-    try {
-      const saved = localStorage.getItem(`uploaded_slot_${project.id}_01`);
-      if (saved) setCustomImg(saved);
-    } catch {
-      // ignore
-    }
-  }, [project.id]);
-
-  const displayImage = customImg || project.image;
+  // Use saved media from server/auth context if available, otherwise default project image
+  const serverSavedImg = savedMedia[`${project.id}_01`];
+  const displayImage = serverSavedImg || project.image;
 
   return (
     <div

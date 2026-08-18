@@ -1,5 +1,30 @@
 import { Project, ExperienceItem, EducationItem, ToolItem, AwardItem } from '../types';
-import { samamAiLogo, iitMadrasLcLabLogo, beyondSpellingMistakeLogo, femiluxLogo } from './logos';
+import {
+  samamAiLogo,
+  samamPost01,
+  samamPost02,
+  samamPost03,
+  samamPost04,
+  samamPost05,
+  iitMadrasLcLabLogo,
+  iitPost01,
+  iitPost02,
+  iitPost03,
+  iitPost04,
+  iitPost05,
+  beyondSpellingMistakeLogo,
+  btsmPost01,
+  btsmPost02,
+  btsmPost03,
+  btsmPost04,
+  btsmPost05,
+  femiluxLogo,
+  femiluxPost01,
+  femiluxPost02,
+  femiluxPost03,
+  femiluxPost04,
+  femiluxPost05
+} from './logos';
 
 // ==========================================
 // 01 — BRANDING & LOGO DESIGN
@@ -17,13 +42,13 @@ export const brandingProjects: Project[] = [
     roles: ['Logo Design', 'Brand Identity', 'Visual Design'],
     role: 'Logo Design & Brand Identity',
     details: {
-      overview: 'Brand identity work created for SAMAM.ai, an AI-powered education platform.',
+      overview: 'A visual identity created for a modern education startup — an AI-powered learning platform designed for accessibility, especially for dyslexic learners.',
       gallerySlots: [
-        { slotNumber: '01', title: 'PRIMARY LOGO', image: samamAiLogo },
-        { slotNumber: '02', title: 'LOGO PRESENTATION' },
-        { slotNumber: '03', title: 'LOGO VARIATION' },
-        { slotNumber: '04', title: 'BRAND APPLICATION' },
-        { slotNumber: '05', title: 'FINAL BRAND SHOWCASE' }
+        { slotNumber: '01', title: 'BRAND IDENTITY DESIGN', image: samamPost01 },
+        { slotNumber: '02', title: 'PRIMARY LOGO', image: samamPost02 },
+        { slotNumber: '03', title: 'LOGO VARIATIONS', image: samamPost03 },
+        { slotNumber: '04', title: 'SYMBOL / ICON', image: samamPost04 },
+        { slotNumber: '05', title: 'BRAND IN ACTION', image: samamPost05 }
       ]
     }
   },
@@ -41,11 +66,11 @@ export const brandingProjects: Project[] = [
     details: {
       overview: 'Logo design created for an LC Lab at IIT Madras.',
       gallerySlots: [
-        { slotNumber: '01', title: 'PRIMARY LOGO', image: iitMadrasLcLabLogo },
-        { slotNumber: '02', title: 'LOGO PRESENTATION' },
-        { slotNumber: '03', title: 'LOGO VARIATION' },
-        { slotNumber: '04', title: 'BRAND APPLICATION' },
-        { slotNumber: '05', title: 'FINAL BRAND SHOWCASE' }
+        { slotNumber: '01', title: 'PRIMARY LOGO', image: iitPost01 },
+        { slotNumber: '02', title: 'LOGO PRESENTATION', image: iitPost02 },
+        { slotNumber: '03', title: 'LOGO VARIATION', image: iitPost03 },
+        { slotNumber: '04', title: 'BRAND APPLICATION', image: iitPost04 },
+        { slotNumber: '05', title: 'FINAL BRAND SHOWCASE', image: iitPost05 }
       ]
     }
   },
@@ -63,11 +88,11 @@ export const brandingProjects: Project[] = [
     details: {
       overview: 'Logo identity created for the Beyond the Spelling Mistake channel associated with influencer Arun Fernandes.',
       gallerySlots: [
-        { slotNumber: '01', title: 'PRIMARY LOGO', image: beyondSpellingMistakeLogo },
-        { slotNumber: '02', title: 'LOGO PRESENTATION' },
-        { slotNumber: '03', title: 'LOGO VARIATION' },
-        { slotNumber: '04', title: 'BRAND APPLICATION' },
-        { slotNumber: '05', title: 'FINAL BRAND SHOWCASE' }
+        { slotNumber: '01', title: 'PRIMARY LOGO', image: btsmPost01 },
+        { slotNumber: '02', title: 'LOGO PRESENTATION', image: btsmPost02 },
+        { slotNumber: '03', title: 'LOGO VARIATION', image: btsmPost03 },
+        { slotNumber: '04', title: 'BRAND APPLICATION', image: btsmPost04 },
+        { slotNumber: '05', title: 'FINAL BRAND SHOWCASE', image: btsmPost05 }
       ]
     }
   },
@@ -86,11 +111,11 @@ export const brandingProjects: Project[] = [
     details: {
       overview: 'Brand identity and visual design work created for the Femilux beauty parlour.',
       gallerySlots: [
-        { slotNumber: '01', title: 'LOGO', image: femiluxLogo },
-        { slotNumber: '02', title: 'POSTER DESIGN' },
-        { slotNumber: '03', title: 'VISITING CARD' },
-        { slotNumber: '04', title: 'PROMOTIONAL VIDEO', isVideo: true },
-        { slotNumber: '05', title: 'FINAL BRAND SHOWCASE' }
+        { slotNumber: '01', title: 'LOGO', image: femiluxPost01 },
+        { slotNumber: '02', title: 'POSTER DESIGN', image: femiluxPost02 },
+        { slotNumber: '03', title: 'VISITING CARD', image: femiluxPost03 },
+        { slotNumber: '04', title: 'PROMOTIONAL VIDEO', image: femiluxPost04, isVideo: true },
+        { slotNumber: '05', title: 'FINAL BRAND SHOWCASE', image: femiluxPost05 }
       ]
     }
   }

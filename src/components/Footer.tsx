@@ -1,7 +1,10 @@
 import React from 'react';
-import { ArrowUp, Heart, Sparkles } from 'lucide-react';
+import { ArrowUp, Heart, Sparkles, Lock } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export const Footer: React.FC = () => {
+  const { setIsOwnerModalOpen, isAdmin } = useAuth();
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -63,8 +66,17 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Row */}
         <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
-          <div>
-            © {new Date().getFullYear()} Aravind Shaw. All rights reserved.
+          <div className="flex items-center gap-3">
+            <span>© {new Date().getFullYear()} Aravind Shaw. All rights reserved.</span>
+            <button
+              id="owner-portal-trigger"
+              onClick={() => setIsOwnerModalOpen(true)}
+              className="inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-emerald-700 transition-colors cursor-pointer"
+              title="Portfolio Owner Portal"
+            >
+              <Lock className="w-3 h-3" />
+              <span>{isAdmin ? 'Owner Mode (Active)' : 'Owner Portal'}</span>
+            </button>
           </div>
           <div className="flex items-center gap-4">
             <span className="inline-flex items-center gap-1.5">
@@ -80,3 +92,4 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
+
