@@ -48,12 +48,14 @@ export const Work: React.FC<WorkProps> = ({ onSelectProject }) => {
             2. IIT MADRAS — LC LAB
             3. BEYOND THE SPELLING MISTAKE
             4. FEMILUX
+            Rendered in a single horizontal row of 4 equal-width cards on desktop
         */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          {brandingProjects.map((project) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+          {brandingProjects.map((project, index) => (
             <ProjectCard
               key={project.id}
               project={project}
+              projectNumber={`0${index + 1}`}
               onSelect={onSelectProject}
               aspect="portrait"
             />
