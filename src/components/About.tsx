@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { aboutData } from '../lib/data';
-import { Sparkles, CheckCircle2, Award, Film, Layers, Compass, ArrowUpRight } from 'lucide-react';
+import { Sparkles, CheckCircle2, Award, Film, Layers, Compass, ArrowUpRight, Camera } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { ProfileUploadModal } from './ProfileUploadModal';
+import aravindPortraitDefault from '../assets/images/aravind_hero_portrait_1787160460398.jpg';
 
 export const About: React.FC = () => {
+  const { isAdmin, savedMedia } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const displayPortrait = savedMedia['hero_portrait_main'] || savedMedia['hero_portrait'] || aravindPortraitDefault;
+
   return (
     <section id="about" className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Heading */}
@@ -30,9 +38,37 @@ export const About: React.FC = () => {
         <div className="lg:col-span-7 space-y-6">
           <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 md:p-10 shadow-2xs space-y-6">
             
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
-              <Compass className="w-3.5 h-3.5" />
-              <span>Motion with Purpose</span>
+            <div className="flex items-center justify-between">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
+                <Compass className="w-3.5 h-3.5" />
+                <span>Motion with Purpose</span>
+              </div>
+
+              {/* Compact Profile Picture & Owner Upload Trigger */}
+              <div className="flex items-center gap-2.5">
+                <div 
+                  onClick={() => setIsModalOpen(true)}
+                  className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-emerald-200 shadow-2xs cursor-pointer group hover:scale-105 transition-transform"
+                  title="Click to replace profile picture"
+                >
+                  <img
+                    src={displayPortrait}
+                    alt="Aravind Shaw"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white">
+                    <Camera className="w-3.5 h-3.5" />
+                  </div>
+                </div>
+                {isAdmin && (
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 underline"
+                  >
+                    Edit Photo
+                  </button>
+                )}
+              </div>
             </div>
 
             <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight leading-snug">
@@ -106,6 +142,11 @@ export const About: React.FC = () => {
         </div>
 
       </div>
+
+      <ProfileUploadModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 };

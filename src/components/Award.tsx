@@ -1,9 +1,31 @@
-import React, { useState } from 'react';
-import { Trophy, Play, Sparkles, CheckCircle2, Medal, Star, ExternalLink } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Trophy, Play, Sparkles, CheckCircle2, Medal, Star, ExternalLink, Camera, Upload, Check, Loader2 } from 'lucide-react';
 import { awardDetails } from '../lib/data';
+import { useAuth } from '../context/AuthContext';
 
 export const Award: React.FC = () => {
+  const { isAdmin, savedMedia, saveProjectMedia } = useAuth();
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isUploadingThumb, setIsUploadingThumb] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const currentThumb = savedMedia['award_bolt_thumb'] || savedMedia['award_bolt'] || 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80';
+
+  const handleThumbUpload = (file: File) => {
+    if (!file.type.startsWith('image/')) return;
+    setIsUploadingThumb(true);
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const dataUrl = e.target?.result as string;
+      if (dataUrl) {
+        await saveProjectMedia('award_bolt', 'thumb', dataUrl, 'image', {
+          title: 'Usain Bolt Award Thumbnail'
+        });
+      }
+      setIsUploadingThumb(false);
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <section id="award" className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,11 +67,32 @@ export const Award: React.FC = () => {
               ) : (
                 <div className="relative w-full h-full">
                   <img
-                    src="https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80"
+                    src={currentThumb}
                     alt="Usain Bolt Motion Campaign Showcase"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
+
+                  {isAdmin && (
+                    <div className="absolute top-3 right-3 z-20">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => e.target.files?.[0] && handleThumbUpload(e.target.files[0])}
+                        className="hidden"
+                      />
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploadingThumb}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-md transition-all cursor-pointer backdrop-blur-md"
+                        title="Upload new thumbnail"
+                      >
+                        {isUploadingThumb ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Camera className="w-3.5 h-3.5" />}
+                        <span>Owner: Replace Thumbnail</span>
+                      </button>
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/30 transition-colors flex items-center justify-center">
                     <button
                       id="award-video-play-btn"

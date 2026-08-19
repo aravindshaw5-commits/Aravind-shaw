@@ -1,4 +1,5 @@
 import express from 'express';
+import http from 'http';
 import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
@@ -15,8 +16,8 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Auth & Security Configuration
-const OWNER_PASSWORD = process.env.OWNER_ADMIN_PASSWORD || 'aravind-admin-2025';
-const JWT_SECRET = process.env.ADMIN_SECRET_KEY || 'portfolio-owner-secure-hmac-key-2025';
+const OWNER_PASSWORD = process.env.OWNER_ADMIN_PASSWORD || 'Aravind-Shaw-2026';
+const JWT_SECRET = process.env.ADMIN_SECRET_KEY || 'portfolio-owner-secure-hmac-key-2026';
 
 // Persistent storage file
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -117,7 +118,7 @@ app.post('/api/auth/login', (req, res) => {
   }
 
   // Check password against owner password or default fallback
-  const isMatch = password === OWNER_PASSWORD || password === 'aravind-admin-2025' || password === 'owner2025' || password === 'admin';
+  const isMatch = password === OWNER_PASSWORD || password === 'Aravind-Shaw-2026';
 
   if (!isMatch) {
     return res.status(401).json({ error: 'Invalid owner credentials' });
@@ -152,19 +153,23 @@ app.get('/api/media', (req, res) => {
   });
 });
 
-// Admin-only POST: Upload / Replace project media
+// Admin-only POST: Upload / Replace project media or metadata
 app.post('/api/admin/media', requireAdminAuth, (req, res) => {
-  const { projectId, slotNumber, mediaUrl, mediaType } = req.body;
+  const { projectId, slotNumber, mediaUrl, mediaType, title, description, extra } = req.body;
 
-  if (!projectId || !slotNumber || !mediaUrl) {
-    return res.status(400).json({ error: 'projectId, slotNumber, and mediaUrl are required' });
+  if (!projectId || !slotNumber) {
+    return res.status(400).json({ error: 'projectId and slotNumber are required' });
   }
 
   const key = `${projectId}_${slotNumber}`;
   mediaStore[key] = {
-    url: mediaUrl,
+    ...mediaStore[key],
+    ...(mediaUrl ? { url: mediaUrl } : {}),
+    ...(title !== undefined ? { title } : {}),
+    ...(description !== undefined ? { description } : {}),
+    ...(extra ? { extra } : {}),
     updatedAt: new Date().toISOString(),
-    mediaType: mediaType || 'image'
+    mediaType: mediaType || mediaStore[key]?.mediaType || 'image'
   };
 
   persistMediaStore();
@@ -200,9 +205,16 @@ app.delete('/api/admin/media', requireAdminAuth, (req, res) => {
 
 // Start the server with Vite middleware integration
 async function startServer() {
+  const server = http.createServer(app);
+
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: {
+          server
+        }
+      },
       appType: 'spa'
     });
     app.use(vite.middlewares);
@@ -214,7 +226,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  server.listen(PORT, '0.0.0.0', () => {
     console.log(`Portfolio Server running on http://0.0.0.0:${PORT}`);
   });
 }

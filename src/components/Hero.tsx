@@ -1,7 +1,15 @@
-import React from 'react';
-import { ArrowDown, Play, Mail, Sparkles, CheckCircle2, Film } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowDown, Play, Mail, Sparkles, CheckCircle2, Film, Camera, Upload, Shield } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { ProfileUploadModal } from './ProfileUploadModal';
+import aravindPortrait from '../assets/images/aravind_hero_portrait_1787160460398.jpg';
 
 export const Hero: React.FC = () => {
+  const { isAdmin, savedMedia } = useAuth();
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
+
+  const displayPortrait = savedMedia['hero_portrait_main'] || savedMedia['hero_portrait'] || aravindPortrait;
+
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -124,24 +132,42 @@ export const Hero: React.FC = () => {
             <div className="relative w-full max-w-md">
               
               {/* Outer Decorative Border Frame */}
-              <div className="relative rounded-2xl p-2 bg-white border border-slate-200/90 shadow-lg">
+              <div className="relative rounded-2xl p-2 bg-white border border-slate-200/90 shadow-lg group/portrait">
                 <div className="relative rounded-xl overflow-hidden aspect-[4/5] bg-slate-100">
                   <img
                     id="hero-portrait-image"
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=80"
+                    src={displayPortrait}
                     alt="Aravind Shaw — Motion Designer & Creative Director"
-                    className="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover object-center transform group-hover/portrait:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
                   
                   {/* Subtle Gradient Overlay at the bottom */}
-                  <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-950/70 to-transparent flex flex-col justify-end p-5 text-white">
+                  <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-950/70 to-transparent flex flex-col justify-end p-5 text-white pointer-events-none">
                     <span className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
                       Creative Direction
                     </span>
                     <span className="text-sm font-medium text-slate-100">
                       Motion Graphics • Brand Strategy • 2D/3D Animation
                     </span>
+                  </div>
+
+                  {/* Owner Upload / Replace Action Badge */}
+                  <div className="absolute top-3 right-3 z-20">
+                    <button
+                      id="hero-replace-portrait-btn"
+                      onClick={() => setIsProfileModalOpen(true)}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md transition-all cursor-pointer backdrop-blur-md ${
+                        isAdmin
+                          ? 'bg-emerald-600/95 hover:bg-emerald-700 text-white border border-emerald-400/40 opacity-100 scale-100'
+                          : 'bg-slate-900/80 hover:bg-slate-900 text-white border border-white/20 opacity-0 group-hover/portrait:opacity-100 hover:scale-105'
+                      }`}
+                      title="Upload / Replace Personal Profile Photo"
+                      aria-label="Upload personal profile photo"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>{isAdmin ? 'Owner: Replace Photo' : 'Change Photo'}</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -182,6 +208,12 @@ export const Hero: React.FC = () => {
 
         </div>
       </div>
+
+      {/* Owner Profile Upload Modal */}
+      <ProfileUploadModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+      />
     </section>
   );
 };

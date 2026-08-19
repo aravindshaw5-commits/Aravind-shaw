@@ -1,17 +1,32 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
+export interface MediaEntry {
+  url?: string;
+  title?: string;
+  description?: string;
+  mediaType?: string;
+  updatedAt?: string;
+  extra?: any;
+}
+
 interface AuthContextType {
   isAdmin: boolean;
   isCheckingAuth: boolean;
   token: string | null;
   savedMedia: Record<string, string>;
+  savedMetadata: Record<string, MediaEntry>;
   login: (password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   saveProjectMedia: (
     projectId: string,
     slotNumber: string,
-    mediaUrl: string,
-    mediaType?: string
+    mediaUrl?: string,
+    mediaType?: string,
+    meta?: { title?: string; description?: string; extra?: any }
+  ) => Promise<{ success: boolean; error?: string }>;
+  saveReelData: (
+    reelId: string,
+    data: { title?: string; description?: string; thumbnailUrl?: string; videoUrl?: string }
   ) => Promise<{ success: boolean; error?: string }>;
   removeProjectMedia: (
     projectId: string,
@@ -29,6 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
   const [token, setToken] = useState<string | null>(null);
   const [savedMedia, setSavedMedia] = useState<Record<string, string>>({});
+  const [savedMetadata, setSavedMetadata] = useState<Record<string, MediaEntry>>({});
   const [isOwnerModalOpen, setIsOwnerModalOpen] = useState<boolean>(false);
 
   // Fetch public media from server so all visitors see the latest saved media
@@ -39,12 +55,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const data = await res.json();
         if (data.media) {
           const map: Record<string, string> = {};
+          const metaMap: Record<string, MediaEntry> = {};
           Object.entries(data.media).forEach(([key, val]: [string, any]) => {
-            if (val && val.url) {
-              map[key] = val.url;
+            if (val) {
+              metaMap[key] = val;
+              if (val.url) {
+                map[key] = val.url;
+              }
             }
           });
           setSavedMedia(map);
+          setSavedMetadata(metaMap);
         }
       }
     } catch (err) {
@@ -125,8 +146,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const saveProjectMedia = async (
     projectId: string,
     slotNumber: string,
-    mediaUrl: string,
-    mediaType = 'image'
+    mediaUrl?: string,
+    mediaType = 'image',
+    meta?: { title?: string; description?: string; extra?: any }
   ): Promise<{ success: boolean; error?: string }> => {
     if (!token || !isAdmin) {
       return { success: false, error: 'Unauthorized. Owner login required.' };
@@ -143,14 +165,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           projectId,
           slotNumber,
           mediaUrl,
-          mediaType
+          mediaType,
+          title: meta?.title,
+          description: meta?.description,
+          extra: meta?.extra
         })
       });
 
       const data = await res.json();
       if (res.ok) {
         const key = `${projectId}_${slotNumber}`;
-        setSavedMedia(prev => ({ ...prev, [key]: mediaUrl }));
+        if (mediaUrl) {
+          setSavedMedia(prev => ({ ...prev, [key]: mediaUrl }));
+        }
+        setSavedMetadata(prev => ({
+          ...prev,
+          [key]: {
+            ...prev[key],
+            ...(mediaUrl ? { url: mediaUrl } : {}),
+            ...(meta?.title !== undefined ? { title: meta.title } : {}),
+            ...(meta?.description !== undefined ? { description: meta.description } : {}),
+            mediaType: mediaType || 'image',
+            updatedAt: new Date().toISOString()
+          }
+        }));
         return { success: true };
       } else {
         if (res.status === 401) {
@@ -160,6 +198,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (err: any) {
       return { success: false, error: err.message || 'Error communicating with server' };
+    }
+  };
+
+  const saveReelData = async (
+    reelId: string,
+    data: { title?: string; description?: string; thumbnailUrl?: string; videoUrl?: string }
+  ): Promise<{ success: boolean; error?: string }> => {
+    if (!token || !isAdmin) {
+      return { success: false, error: 'Unauthorized. Owner login required.' };
+    }
+
+    try {
+      // If thumbnail is provided, save under slot 'thumb'
+      if (data.thumbnailUrl) {
+        await saveProjectMedia(reelId, 'thumb', data.thumbnailUrl, 'image');
+      }
+      // If video is provided, save under slot 'video'
+      if (data.videoUrl) {
+        await saveProjectMedia(reelId, 'video', data.videoUrl, 'video');
+      }
+      // If title or description is provided, save under slot 'meta'
+      if (data.title !== undefined || data.description !== undefined) {
+        await saveProjectMedia(reelId, 'meta', undefined, 'meta', {
+          title: data.title,
+          description: data.description
+        });
+      }
+
+      await refreshMedia();
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Failed to save reel changes' };
     }
   };
 
@@ -205,9 +275,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isCheckingAuth,
         token,
         savedMedia,
+        savedMetadata,
         login,
         logout,
         saveProjectMedia,
+        saveReelData,
         removeProjectMedia,
         isOwnerModalOpen,
         setIsOwnerModalOpen,

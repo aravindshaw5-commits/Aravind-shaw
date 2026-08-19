@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ProjectCard } from './ProjectCard';
+import { ReelCard } from './ReelCard';
+import { ReelManagerModal } from './ReelManagerModal';
+import { useAuth } from '../context/AuthContext';
 import { Project } from '../types';
 import {
   brandingProjects,
@@ -11,13 +14,16 @@ import {
   graphicEditorialProjects,
   aiCreativeProjects
 } from '../lib/data';
-import { Sparkles, Layers, Film, Box, PenTool, BookOpen, Cpu, Video, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Sparkles, Layers, Film, Box, PenTool, BookOpen, Cpu, Video, CheckCircle2, ArrowRight, Shield, Upload } from 'lucide-react';
 
 interface WorkProps {
   onSelectProject: (project: Project) => void;
 }
 
 export const Work: React.FC<WorkProps> = ({ onSelectProject }) => {
+  const { isAdmin } = useAuth();
+  const [reelsManagerOpen, setReelsManagerOpen] = useState<boolean>(false);
+  const [selectedReelId, setSelectedReelId] = useState<string>('reel-01');
   return (
     <div id="portfolio-work-root" className="space-y-24 sm:space-y-32">
       
@@ -64,7 +70,7 @@ export const Work: React.FC<WorkProps> = ({ onSelectProject }) => {
       </section>
 
       {/* ========================================================================= */}
-      {/* 02 — SOCIAL MEDIA REELS (Short-form 9:16 vertical video grid - 8 items) */}
+      {/* 02 — SOCIAL MEDIA REELS (EXACTLY 4 selected 9:16 Instagram Reels) */}
       {/* ========================================================================= */}
       <section id="reels" className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-4 border-b border-slate-200">
@@ -80,23 +86,50 @@ export const Work: React.FC<WorkProps> = ({ onSelectProject }) => {
               High-impact, short-form vertical videos engineered for rapid engagement, viral hooks, and high-retention social media distribution.
             </p>
           </div>
-          <div className="mt-4 md:mt-0 flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-            <span>8 Selected Viral Cuts</span>
+          <div className="mt-4 md:mt-0 flex items-center gap-3">
+            {isAdmin && (
+              <button
+                onClick={() => {
+                  setSelectedReelId('reel-01');
+                  setReelsManagerOpen(true);
+                }}
+                className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+              >
+                <Shield className="w-3.5 h-3.5 text-emerald-200" />
+                <span>Owner: Upload & Replace Reels</span>
+              </button>
+            )}
+
+            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+              <span>4 Selected Viral Cuts</span>
+            </div>
           </div>
         </div>
 
-        {/* 8 Short-form Reels in 9:16 vertical grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {socialReelProjects.map((reel) => (
-            <ProjectCard
+        {/* 4 Selected Instagram Reels in 1 horizontal row on desktop (repeat(4, 1fr)), 2 cols on tablet, 1 on mobile */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+          {socialReelProjects.slice(0, 4).map((reel, index) => (
+            <ReelCard
               key={reel.id}
-              project={reel}
-              onSelect={onSelectProject}
-              aspect="vertical"
+              reel={reel}
+              reelNumber={`0${index + 1}`}
+              onOpenManager={(id) => {
+                setSelectedReelId(id);
+                setReelsManagerOpen(true);
+              }}
             />
           ))}
         </div>
+
+        {/* Dedicated Owner-Only Reels Manager Modal */}
+        {isAdmin && (
+          <ReelManagerModal
+            isOpen={reelsManagerOpen}
+            onClose={() => setReelsManagerOpen(false)}
+            initialReelId={selectedReelId}
+          />
+        )}
       </section>
 
       {/* ========================================================================= */}

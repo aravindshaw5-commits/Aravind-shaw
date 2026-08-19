@@ -74,3 +74,4 @@ export interface AwardItem {
   badge: string;
   stats?: { label: string; value: string }[];
 }
+

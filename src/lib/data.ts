@@ -122,17 +122,18 @@ export const brandingProjects: Project[] = [
 ];
 
 // ==========================================
-// 02 — SOCIAL MEDIA REELS (8 selected short-form 9:16 videos)
+// 02 — SOCIAL MEDIA REELS (EXACTLY 4 selected vertical 9:16 Instagram Reels)
 // ==========================================
 export const socialReelProjects: Project[] = [
   {
     id: 'reel-01',
     title: 'Kinetic Hook & Typography Breakdown',
-    subtitle: 'Social Reel #01',
+    subtitle: 'REEL 01',
     category: 'Social Media Reels',
     categoryNumber: '02',
     description: 'Fast-paced kinetic typography reel with rhythmic sound design and frame-perfect cutaways designed to maximize 3-second retention on Instagram.',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1080&h=1920&q=85',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     aspectRatio: 'vertical',
     tags: ['Kinetic Type', '9:16 Format', 'Sound Design', 'High Retention'],
     client: 'Creator Studio',
@@ -147,11 +148,12 @@ export const socialReelProjects: Project[] = [
   {
     id: 'reel-02',
     title: '3D Cyber Watch Drop Teaser',
-    subtitle: 'Social Reel #02',
+    subtitle: 'REEL 02',
     category: 'Social Media Reels',
     categoryNumber: '02',
     description: 'High-contrast 3D watch reveal reel with metallic lighting passes, macro textures, and impactful glitch transitions.',
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1080&h=1920&q=85',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     aspectRatio: 'vertical',
     tags: ['3D Product Reel', 'Macro Render', 'Octane Lighting'],
     client: 'Aethel Watches',
@@ -166,11 +168,12 @@ export const socialReelProjects: Project[] = [
   {
     id: 'reel-03',
     title: 'Logo Morphing Sequence',
-    subtitle: 'Social Reel #03',
+    subtitle: 'REEL 03',
     category: 'Social Media Reels',
     categoryNumber: '02',
     description: 'Seamless vector logo transformation reel illustrating fluid morphing physics and elastic easing curves.',
-    image: 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=1080&h=1920&q=85',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
     aspectRatio: 'vertical',
     tags: ['Vector Morph', 'Motion Theory', 'Elastic Easing'],
     client: 'Design Craft Weekly',
@@ -185,97 +188,22 @@ export const socialReelProjects: Project[] = [
   {
     id: 'reel-04',
     title: 'Animated Character Walk-Cycle Loop',
-    subtitle: 'Social Reel #04',
+    subtitle: 'REEL 04',
     category: 'Social Media Reels',
     categoryNumber: '02',
     description: 'Infinite looping 2D frame-by-frame character walk cycle with secondary cloth dynamics and parallax city backdrop.',
-    image: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1080&h=1920&q=85',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
     aspectRatio: 'vertical',
     tags: ['Character Rig', 'Looping Animation', 'Parallax City'],
     client: 'Original Art Series',
-    year: '2023',
+    year: '2024',
     highlight: '940K Views • 34K Likes',
     stats: [
       { label: 'Views', value: '940K' },
       { label: 'Loop Rate', value: '3.2x' }
     ],
     tools: ['Animate CC', 'After Effects', 'Photoshop']
-  },
-  {
-    id: 'reel-05',
-    title: 'Brand Storytelling Micro-Doc',
-    subtitle: 'Social Reel #05',
-    category: 'Social Media Reels',
-    categoryNumber: '02',
-    description: 'Fast-paced documentary-style brand story combining archival footage, kinetic graphic overlays, and crisp sound staging.',
-    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80',
-    aspectRatio: 'vertical',
-    tags: ['Micro-Doc', 'Editorial Reel', 'Mixed Media'],
-    client: 'Heritage Atelier',
-    year: '2024',
-    highlight: '1.1M Views • 28K Saves',
-    stats: [
-      { label: 'Views', value: '1.1M' },
-      { label: 'Avg Watch', value: '92%' }
-    ],
-    tools: ['Premiere Pro', 'After Effects', 'Audition']
-  },
-  {
-    id: 'reel-06',
-    title: 'Liquid Dynamic Particle Transition',
-    subtitle: 'Social Reel #06',
-    category: 'Social Media Reels',
-    categoryNumber: '02',
-    description: 'Satisfying liquid simulation and particle burst motion crafted for a viral beverage summer campaign.',
-    image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80',
-    aspectRatio: 'vertical',
-    tags: ['Liquid Simulation', 'Particle FX', 'Viral Trend'],
-    client: 'Zest Tonic',
-    year: '2024',
-    highlight: '4.5M Views • 210K Shares',
-    stats: [
-      { label: 'Views', value: '4.5M' },
-      { label: 'Comments', value: '4.8K' }
-    ],
-    tools: ['Houdini', 'Blender', 'After Effects']
-  },
-  {
-    id: 'reel-07',
-    title: 'UI Kinetic Interaction Showcase',
-    subtitle: 'Social Reel #07',
-    category: 'Social Media Reels',
-    categoryNumber: '02',
-    description: 'Dynamic showcase of glassmorphic mobile UI interactions, biometric unlock motion, and spatial card transitions.',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
-    aspectRatio: 'vertical',
-    tags: ['Spatial UI', 'Mobile Motion', 'Interactive Prototypes'],
-    client: 'Vault FinTech',
-    year: '2023',
-    highlight: '1.6M Views • 62K Saves',
-    stats: [
-      { label: 'Views', value: '1.6M' },
-      { label: 'Engagement', value: '9.8%' }
-    ],
-    tools: ['Figma', 'After Effects', 'Principle']
-  },
-  {
-    id: 'reel-08',
-    title: 'AI Concept Art to Motion Pipeline',
-    subtitle: 'Social Reel #08',
-    category: 'Social Media Reels',
-    categoryNumber: '02',
-    description: 'Behind-the-scenes breakdown turning static AI generation prompts into layered, parallax 2.5D cinematics.',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
-    aspectRatio: 'vertical',
-    tags: ['AI Motion', '2.5D Parallax', 'BTS Pipeline'],
-    client: 'Creative AI Lab',
-    year: '2024',
-    highlight: '2.8M Views • 85K Saves',
-    stats: [
-      { label: 'Views', value: '2.8M' },
-      { label: 'Saves', value: '85K' }
-    ],
-    tools: ['Midjourney', 'Photoshop', 'After Effects']
   }
 ];
 
