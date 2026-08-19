@@ -141,16 +141,6 @@ export const Hero: React.FC = () => {
                     className="w-full h-full object-cover object-center transform group-hover/portrait:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
-                  
-                  {/* Subtle Gradient Overlay at the bottom */}
-                  <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-950/70 to-transparent flex flex-col justify-end p-5 text-white pointer-events-none">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
-                      Creative Direction
-                    </span>
-                    <span className="text-sm font-medium text-slate-100">
-                      Motion Graphics • Brand Strategy • 2D/3D Animation
-                    </span>
-                  </div>
 
                   {/* Owner Upload / Replace Action Badge */}
                   <div className="absolute top-3 right-3 z-20">
