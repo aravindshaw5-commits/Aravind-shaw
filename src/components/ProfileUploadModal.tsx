@@ -16,7 +16,7 @@ import {
   Link as LinkIcon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import aravindPortraitDefault from '../assets/images/aravind_hero_portrait_1787160460398.jpg';
+import aravindPortraitDefault from '../assets/images/Aravind image.png';
 
 interface ProfileUploadModalProps {
   isOpen: boolean;

@@ -3,7 +3,7 @@ import { aboutData } from '../lib/data';
 import { Sparkles, CheckCircle2, Award, Film, Layers, Compass, ArrowUpRight, Camera } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { ProfileUploadModal } from './ProfileUploadModal';
-import aravindPortraitDefault from '../assets/images/aravind_hero_portrait_1787160460398.jpg';
+import aravindPortraitDefault from '../assets/images/Aravind image.png';
 
 export const About: React.FC = () => {
   const { isAdmin, savedMedia } = useAuth();

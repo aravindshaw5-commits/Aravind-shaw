@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ArrowDown, Play, Mail, Sparkles, CheckCircle2, Film, Camera, Upload, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { ProfileUploadModal } from './ProfileUploadModal';
-import aravindPortrait from '../assets/images/aravind_hero_portrait_1787160460398.jpg';
+import aravindPortrait from '../assets/images/Aravind image.png';
 
 export const Hero: React.FC = () => {
   const { isAdmin, savedMedia } = useAuth();
