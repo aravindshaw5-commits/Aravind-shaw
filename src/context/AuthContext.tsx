@@ -6,6 +6,9 @@ export interface MediaEntry {
   description?: string;
   mediaType?: string;
   updatedAt?: string;
+  storagePath?: string;
+  projectId?: string;
+  slotNumber?: string;
   extra?: any;
 }
 
@@ -17,6 +20,18 @@ interface AuthContextType {
   savedMetadata: Record<string, MediaEntry>;
   login: (password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
+  uploadImageFile: (
+    file: File | Blob,
+    key: string,
+    meta?: {
+      title?: string;
+      description?: string;
+      projectId?: string;
+      slotNumber?: string;
+      mediaType?: 'image' | 'video';
+      onProgress?: (percent: number) => void;
+    }
+  ) => Promise<{ success: boolean; url?: string; error?: string }>;
   saveProjectMedia: (
     projectId: string,
     slotNumber: string,
@@ -34,6 +49,10 @@ interface AuthContextType {
   ) => Promise<{ success: boolean; error?: string }>;
   isOwnerModalOpen: boolean;
   setIsOwnerModalOpen: (open: boolean) => void;
+  isImageUploadModalOpen: boolean;
+  setIsImageUploadModalOpen: (open: boolean) => void;
+  selectedUploadSlotKey: string | null;
+  openImageUploadForSlot: (slotKey?: string) => void;
   refreshMedia: () => Promise<void>;
 }
 
@@ -46,8 +65,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [savedMedia, setSavedMedia] = useState<Record<string, string>>({});
   const [savedMetadata, setSavedMetadata] = useState<Record<string, MediaEntry>>({});
   const [isOwnerModalOpen, setIsOwnerModalOpen] = useState<boolean>(false);
+  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState<boolean>(false);
+  const [selectedUploadSlotKey, setSelectedUploadSlotKey] = useState<string | null>(null);
 
-  // Fetch public media from server so all visitors see the latest saved media
+  const openImageUploadForSlot = useCallback((slotKey?: string) => {
+    setSelectedUploadSlotKey(slotKey || null);
+    setIsImageUploadModalOpen(true);
+  }, []);
+
+  // Fetch media from server local storage
   const refreshMedia = useCallback(async () => {
     try {
       const res = await fetch('/api/media');
@@ -69,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
     } catch (err) {
-      console.warn('Could not fetch server media, using fallback:', err);
+      console.warn('Could not fetch local media store:', err);
     }
   }, []);
 
@@ -141,8 +167,86 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('portfolio_owner_token');
     setToken(null);
     setIsAdmin(false);
+    setIsImageUploadModalOpen(false);
   };
 
+  /**
+   * Upload image file as base64 data URL to local server media store
+   */
+  const uploadImageFile = async (
+    file: File | Blob,
+    key: string,
+    meta?: {
+      title?: string;
+      description?: string;
+      projectId?: string;
+      slotNumber?: string;
+      mediaType?: 'image' | 'video';
+      onProgress?: (percent: number) => void;
+    }
+  ): Promise<{ success: boolean; url?: string; error?: string }> => {
+    if (!isAdmin) {
+      return { success: false, error: 'Unauthorized: Owner login is required to upload images.' };
+    }
+
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      meta?.onProgress?.(100);
+
+      // Update local state
+      setSavedMedia(prev => ({ ...prev, [key]: dataUrl }));
+      setSavedMetadata(prev => ({
+        ...prev,
+        [key]: {
+          url: dataUrl,
+          title: meta?.title,
+          description: meta?.description,
+          projectId: meta?.projectId,
+          slotNumber: meta?.slotNumber,
+          mediaType: meta?.mediaType || (file.type.startsWith('video/') ? 'video' : 'image'),
+          updatedAt: new Date().toISOString()
+        }
+      }));
+
+      // Keep server synchronized
+      if (token) {
+        const parts = key.split('_');
+        const pId = meta?.projectId || (parts.length > 1 ? parts.slice(0, -1).join('_') : key);
+        const sNum = meta?.slotNumber || (parts.length > 1 ? parts[parts.length - 1] : 'main');
+
+        await fetch('/api/admin/media', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            projectId: pId,
+            slotNumber: sNum,
+            mediaUrl: dataUrl,
+            mediaType: meta?.mediaType || 'image',
+            title: meta?.title,
+            description: meta?.description
+          })
+        });
+      }
+
+      return { success: true, url: dataUrl };
+    } catch (err: any) {
+      console.error('Error during image upload:', err);
+      return { success: false, error: err.message || 'Image upload failed' };
+    }
+  };
+
+  /**
+   * Save media URL to state and server
+   */
   const saveProjectMedia = async (
     projectId: string,
     slotNumber: string,
@@ -150,54 +254,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     mediaType = 'image',
     meta?: { title?: string; description?: string; extra?: any }
   ): Promise<{ success: boolean; error?: string }> => {
-    if (!token || !isAdmin) {
+    if (!isAdmin) {
       return { success: false, error: 'Unauthorized. Owner login required.' };
     }
 
+    const key = `${projectId}_${slotNumber}`;
+
     try {
-      const res = await fetch('/api/admin/media', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
+      if (mediaUrl) {
+        setSavedMedia(prev => ({ ...prev, [key]: mediaUrl }));
+      }
+      setSavedMetadata(prev => ({
+        ...prev,
+        [key]: {
+          ...prev[key],
+          ...(mediaUrl ? { url: mediaUrl } : {}),
+          ...(meta?.title !== undefined ? { title: meta.title } : {}),
+          ...(meta?.description !== undefined ? { description: meta.description } : {}),
           projectId,
           slotNumber,
-          mediaUrl,
-          mediaType,
-          title: meta?.title,
-          description: meta?.description,
-          extra: meta?.extra
-        })
-      });
+          mediaType: mediaType || 'image',
+          updatedAt: new Date().toISOString()
+        }
+      }));
 
-      const data = await res.json();
-      if (res.ok) {
-        const key = `${projectId}_${slotNumber}`;
-        if (mediaUrl) {
-          setSavedMedia(prev => ({ ...prev, [key]: mediaUrl }));
-        }
-        setSavedMetadata(prev => ({
-          ...prev,
-          [key]: {
-            ...prev[key],
-            ...(mediaUrl ? { url: mediaUrl } : {}),
-            ...(meta?.title !== undefined ? { title: meta.title } : {}),
-            ...(meta?.description !== undefined ? { description: meta.description } : {}),
-            mediaType: mediaType || 'image',
-            updatedAt: new Date().toISOString()
-          }
-        }));
-        return { success: true };
-      } else {
-        if (res.status === 401) {
-          logout();
-        }
-        return { success: false, error: data.error || 'Failed to save media on server' };
+      if (token) {
+        await fetch('/api/admin/media', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            projectId,
+            slotNumber,
+            mediaUrl,
+            mediaType,
+            title: meta?.title,
+            description: meta?.description,
+            extra: meta?.extra
+          })
+        });
       }
+
+      return { success: true };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Error communicating with server' };
+      return { success: false, error: err.message || 'Error saving media' };
     }
   };
 
@@ -205,20 +307,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     reelId: string,
     data: { title?: string; description?: string; thumbnailUrl?: string; videoUrl?: string }
   ): Promise<{ success: boolean; error?: string }> => {
-    if (!token || !isAdmin) {
+    if (!isAdmin) {
       return { success: false, error: 'Unauthorized. Owner login required.' };
     }
 
     try {
-      // If thumbnail is provided, save under slot 'thumb'
       if (data.thumbnailUrl) {
         await saveProjectMedia(reelId, 'thumb', data.thumbnailUrl, 'image');
       }
-      // If video is provided, save under slot 'video'
       if (data.videoUrl) {
         await saveProjectMedia(reelId, 'video', data.videoUrl, 'video');
       }
-      // If title or description is provided, save under slot 'meta'
       if (data.title !== undefined || data.description !== undefined) {
         await saveProjectMedia(reelId, 'meta', undefined, 'meta', {
           title: data.title,
@@ -237,34 +336,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     projectId: string,
     slotNumber: string
   ): Promise<{ success: boolean; error?: string }> => {
-    if (!token || !isAdmin) {
+    if (!isAdmin) {
       return { success: false, error: 'Unauthorized. Owner login required.' };
     }
 
+    const key = `${projectId}_${slotNumber}`;
+
     try {
-      const res = await fetch('/api/admin/media', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ projectId, slotNumber })
+      setSavedMedia(prev => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+      setSavedMetadata(prev => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
       });
 
-      const data = await res.json();
-      if (res.ok) {
-        const key = `${projectId}_${slotNumber}`;
-        setSavedMedia(prev => {
-          const next = { ...prev };
-          delete next[key];
-          return next;
+      if (token) {
+        await fetch('/api/admin/media', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ projectId, slotNumber })
         });
-        return { success: true };
-      } else {
-        return { success: false, error: data.error || 'Failed to remove media' };
       }
+
+      return { success: true };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Error communicating with server' };
+      return { success: false, error: err.message || 'Error removing media' };
     }
   };
 
@@ -278,11 +381,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         savedMetadata,
         login,
         logout,
+        uploadImageFile,
         saveProjectMedia,
         saveReelData,
         removeProjectMedia,
         isOwnerModalOpen,
         setIsOwnerModalOpen,
+        isImageUploadModalOpen,
+        setIsImageUploadModalOpen,
+        selectedUploadSlotKey,
+        openImageUploadForSlot,
         refreshMedia
       }}
     >
@@ -298,3 +406,4 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+

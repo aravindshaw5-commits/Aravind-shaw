@@ -1,0 +1,54 @@
+{
+  "entities": {
+    "PortfolioMedia": {
+      "title": "Portfolio Media",
+      "description": "Stores image and media URLs uploaded to Firebase Storage for portfolio sections and project galleries",
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Unique key for slot or media item (e.g. hero_portrait_main, p1_1)"
+        },
+        "url": {
+          "type": "string",
+          "description": "Public download URL from Firebase Storage"
+        },
+        "storagePath": {
+          "type": "string",
+          "description": "Firebase Storage file path for cleanup and replacement"
+        },
+        "mediaType": {
+          "type": "string",
+          "description": "image or video"
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional title or label"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description"
+        },
+        "projectId": {
+          "type": "string",
+          "description": "Associated project ID"
+        },
+        "slotNumber": {
+          "type": "string",
+          "description": "Slot index or identifier"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last update"
+        }
+      },
+      "required": ["key", "url"]
+    }
+  },
+  "firestore": {
+    "/portfolio_media/{mediaId}": {
+      "schema": "PortfolioMedia",
+      "description": "Portfolio images and media metadata"
+    }
+  }
+}

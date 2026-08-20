@@ -4,27 +4,25 @@ import { awardDetails } from '../lib/data';
 import { useAuth } from '../context/AuthContext';
 
 export const Award: React.FC = () => {
-  const { isAdmin, savedMedia, saveProjectMedia } = useAuth();
+  const { isAdmin, savedMedia, uploadImageFile } = useAuth();
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isUploadingThumb, setIsUploadingThumb] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const currentThumb = savedMedia['award_bolt_thumb'] || savedMedia['award_bolt'] || 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80';
+  const currentThumb = savedMedia['award_bolt_thumb'] || savedMedia['award_bolt'] || awardDetails.thumbnailUrl || '/images/award-bolt.jpg';
 
-  const handleThumbUpload = (file: File) => {
+  const handleThumbUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) return;
     setIsUploadingThumb(true);
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const dataUrl = e.target?.result as string;
-      if (dataUrl) {
-        await saveProjectMedia('award_bolt', 'thumb', dataUrl, 'image', {
-          title: 'Usain Bolt Award Thumbnail'
-        });
-      }
+    try {
+      await uploadImageFile(file, 'award_bolt_thumb', {
+        title: 'Usain Bolt Award Thumbnail'
+      });
+    } catch (e) {
+      console.error('Failed to upload award thumb:', e);
+    } finally {
       setIsUploadingThumb(false);
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -71,6 +69,9 @@ export const Award: React.FC = () => {
                     alt="Usain Bolt Motion Campaign Showcase"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      e.currentTarget.src = '/images/award-bolt.jpg';
+                    }}
                   />
 
                   {isAdmin && (

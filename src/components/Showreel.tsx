@@ -50,10 +50,13 @@ export const Showreel: React.FC = () => {
           <div className="relative w-full h-full flex items-center justify-center bg-slate-900">
             {/* Background Thumbnail Image */}
             <img
-              src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1600&q=80"
+              src="/images/showreel-cover.jpg"
               alt="Aravind Shaw Showreel Cover"
               className="w-full h-full object-cover opacity-60 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700"
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                e.currentTarget.src = '/images/placeholder.svg';
+              }}
             />
             
             {/* Dark Gradient Overlay */}

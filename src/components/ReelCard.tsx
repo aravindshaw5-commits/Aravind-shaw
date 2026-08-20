@@ -27,7 +27,7 @@ interface ReelCardProps {
 type VideoErrorType = 'no_video' | 'format_error' | 'load_error' | null;
 
 export const ReelCard: React.FC<ReelCardProps> = ({ reel, reelNumber, onOpenManager }) => {
-  const { isAdmin, savedMedia, savedMetadata, saveReelData, removeProjectMedia } = useAuth();
+  const { isAdmin, savedMedia, savedMetadata, uploadImageFile, saveReelData, removeProjectMedia } = useAuth();
 
   // Active playback & error states (strictly no autoplay)
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -103,7 +103,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({ reel, reelNumber, onOpenMana
   };
 
   // Helper for file processing (max 45MB)
-  const processFile = (file: File, type: 'thumb' | 'video') => {
+  const processFile = async (file: File, type: 'thumb' | 'video') => {
     if (!isAdmin) return;
 
     // Type validation
@@ -137,11 +137,48 @@ export const ReelCard: React.FC<ReelCardProps> = ({ reel, reelNumber, onOpenMana
     setIsUploading(true);
     setUploadStatus(null);
 
+    if (type === 'thumb') {
+      try {
+        const key = `${reel.id}_thumb`;
+        const res = await uploadImageFile(file, key, {
+          title: `${reel.title} Thumbnail`,
+          projectId: reel.id,
+          slotNumber: 'thumb',
+          mediaType: 'image'
+        });
+
+        setIsUploading(false);
+
+        if (res.success) {
+          setVideoError(null);
+          setUploadStatus({
+            type: 'success',
+            message: '✓ 9:16 Thumbnail uploaded to Firebase Storage!'
+          });
+          setTimeout(() => setUploadStatus(null), 3500);
+        } else {
+          setUploadStatus({
+            type: 'error',
+            message: res.error || 'Upload to Firebase failed'
+          });
+          setTimeout(() => setUploadStatus(null), 4500);
+        }
+      } catch (err: any) {
+        setIsUploading(false);
+        setUploadStatus({
+          type: 'error',
+          message: err.message || 'Upload error'
+        });
+        setTimeout(() => setUploadStatus(null), 4500);
+      }
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = async () => {
       const dataUrl = reader.result as string;
       const res = await saveReelData(reel.id, {
-        [type === 'thumb' ? 'thumbnailUrl' : 'videoUrl']: dataUrl
+        videoUrl: dataUrl
       });
       setIsUploading(false);
 
@@ -149,7 +186,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({ reel, reelNumber, onOpenMana
         setVideoError(null);
         setUploadStatus({
           type: 'success',
-          message: `${type === 'thumb' ? '9:16 Thumbnail' : 'Reel Video'} uploaded & saved successfully!`
+          message: 'Reel Video uploaded & saved successfully!'
         });
         setTimeout(() => setUploadStatus(null), 3500);
       } else {
@@ -439,6 +476,9 @@ export const ReelCard: React.FC<ReelCardProps> = ({ reel, reelNumber, onOpenMana
               className="w-full h-full object-cover object-center group-hover/thumb:scale-[1.03] transition-transform duration-500 ease-out"
               referrerPolicy="no-referrer"
               loading="lazy"
+              onError={(e) => {
+                e.currentTarget.src = '/images/placeholder.svg';
+              }}
             />
 
             {/* Instagram Dark Gradient Overlay */}

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Menu, X, ArrowUpRight, Sparkles, CloudUpload } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface NavbarProps {
   onNavigate?: (sectionId: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
+  const { isAdmin, setIsImageUploadModalOpen } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('branding');
@@ -113,6 +115,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
 
         {/* Action Button */}
         <div className="hidden sm:flex items-center gap-3">
+          {isAdmin && (
+            <button
+              id="nav-admin-upload-btn"
+              onClick={() => setIsImageUploadModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-black text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+              title="Upload / Replace Portfolio Image (Firebase Storage)"
+            >
+              <CloudUpload className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Upload Image</span>
+            </button>
+          )}
+
           <a
             id="nav-contact-cta"
             href="#contact"
@@ -166,6 +180,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
             ))}
 
             <div className="pt-4 mt-2 border-t border-slate-100 flex flex-col gap-2">
+              {isAdmin && (
+                <button
+                  type="button"
+                  id="mobile-nav-admin-upload"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setIsImageUploadModalOpen(true);
+                  }}
+                  className="w-full py-2.5 rounded-lg bg-slate-900 text-white text-center font-semibold text-xs shadow-xs flex items-center justify-center gap-2"
+                >
+                  <CloudUpload className="w-4 h-4 text-emerald-400" />
+                  <span>Upload / Replace Image (Admin)</span>
+                </button>
+              )}
+
               <a
                 id="mobile-nav-contact"
                 href="#contact"

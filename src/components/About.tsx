@@ -55,6 +55,9 @@ export const About: React.FC = () => {
                     src={displayPortrait}
                     alt="Aravind Shaw"
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = '/images/aravind-portrait.jpg';
+                    }}
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white">
                     <Camera className="w-3.5 h-3.5" />

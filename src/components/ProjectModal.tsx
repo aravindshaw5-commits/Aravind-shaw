@@ -30,6 +30,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
   const {
     isAdmin,
     savedMedia,
+    uploadImageFile,
     saveProjectMedia,
     removeProjectMedia,
     setIsOwnerModalOpen,
@@ -78,7 +79,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
   const processFile = async (file: File, slotNumber: string, isVideo: boolean) => {
     if (!project || !isAdmin) return;
 
-    // Check size limit (max 45MB base64 overhead margin)
     if (file.size > 45 * 1024 * 1024) {
       setFeedback({
         slot: slotNumber,
@@ -91,44 +91,39 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
     setUploadingSlot(slotNumber);
     setFeedback(null);
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const dataUrl = event.target?.result as string;
-      if (dataUrl) {
-        const res = await saveProjectMedia(
-          project.id,
-          slotNumber,
-          dataUrl,
-          isVideo ? 'video' : 'image'
-        );
+    try {
+      const key = `${project.id}_${slotNumber}`;
+      const res = await uploadImageFile(file, key, {
+        title: `${project.title} — Slot ${slotNumber}`,
+        projectId: project.id,
+        slotNumber,
+        mediaType: isVideo ? 'video' : 'image'
+      });
 
-        setUploadingSlot(null);
+      setUploadingSlot(null);
 
-        if (res.success) {
-          setFeedback({
-            slot: slotNumber,
-            message: `✓ Slot ${slotNumber} updated & saved to database. Visible live to all visitors.`,
-            type: 'success'
-          });
-          setTimeout(() => setFeedback(null), 4000);
-        } else {
-          setFeedback({
-            slot: slotNumber,
-            message: res.error || 'Failed to save media',
-            type: 'error'
-          });
-        }
+      if (res.success) {
+        setFeedback({
+          slot: slotNumber,
+          message: `✓ Slot ${slotNumber} updated successfully.`,
+          type: 'success'
+        });
+        setTimeout(() => setFeedback(null), 4000);
+      } else {
+        setFeedback({
+          slot: slotNumber,
+          message: res.error || 'Failed to upload media',
+          type: 'error'
+        });
       }
-    };
-    reader.onerror = () => {
+    } catch (err: any) {
       setUploadingSlot(null);
       setFeedback({
         slot: slotNumber,
-        message: 'Error reading selected file. Please try again.',
+        message: err.message || 'Error uploading file.',
         type: 'error'
       });
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
   const handleFileUpload = async (slotNumber: string, isVideo: boolean, e: React.ChangeEvent<HTMLInputElement>) => {
@@ -580,6 +575,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                               className="w-full h-full object-contain"
                               referrerPolicy="no-referrer"
                               loading="lazy"
+                              onError={(e) => {
+                                e.currentTarget.src = '/images/placeholder.svg';
+                              }}
                             />
 
                             {/* Drag-over indicator overlay */}

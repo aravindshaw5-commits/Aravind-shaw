@@ -27,6 +27,7 @@ export const ProfileUploadModal: React.FC<ProfileUploadModalProps> = ({ isOpen, 
   const {
     isAdmin,
     savedMedia,
+    uploadImageFile,
     saveProjectMedia,
     removeProjectMedia,
     login,
@@ -36,6 +37,8 @@ export const ProfileUploadModal: React.FC<ProfileUploadModalProps> = ({ isOpen, 
   const [activeTab, setActiveTab] = useState<'upload' | 'url'>('upload');
   const [imageUrlInput, setImageUrlInput] = useState<string>('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedRawFile, setSelectedRawFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
@@ -78,6 +81,8 @@ export const ProfileUploadModal: React.FC<ProfileUploadModalProps> = ({ isOpen, 
       return;
     }
 
+    setSelectedRawFile(file);
+
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
@@ -111,34 +116,54 @@ export const ProfileUploadModal: React.FC<ProfileUploadModalProps> = ({ isOpen, 
       setStatusMessage({ text: 'Please enter a valid image URL.', type: 'error' });
       return;
     }
+    setSelectedRawFile(null);
     setPreviewUrl(imageUrlInput.trim());
     setStatusMessage(null);
   };
 
   const handleSaveProfileImage = async () => {
     const finalImage = previewUrl || (activeTab === 'url' ? imageUrlInput.trim() : null);
-    if (!finalImage) {
+    if (!finalImage && !selectedRawFile) {
       setStatusMessage({ text: 'Please select a file or provide an image URL first.', type: 'error' });
       return;
     }
 
     setIsProcessing(true);
+    setUploadProgress(0);
     setStatusMessage(null);
 
     try {
-      // Save for hero portrait
-      const res = await saveProjectMedia('hero_portrait', 'main', finalImage, 'image', {
-        title: 'Hero Profile Portrait',
-        description: 'Personal profile image of Aravind Shaw'
-      });
+      if (selectedRawFile) {
+        // Upload directly to Firebase Storage and update Firestore
+        const res = await uploadImageFile(selectedRawFile, 'hero_portrait_main', {
+          title: 'Hero Profile Portrait',
+          description: 'Personal profile image of Aravind Shaw',
+          onProgress: (percent) => setUploadProgress(percent)
+        });
 
-      if (res.success) {
-        setStatusMessage({ text: 'Profile image updated successfully across the portfolio!', type: 'success' });
-        setTimeout(() => {
-          onClose();
-        }, 1200);
-      } else {
-        setStatusMessage({ text: res.error || 'Failed to save image. Please verify you are logged in.', type: 'error' });
+        if (res.success) {
+          setStatusMessage({ text: 'Profile image securely stored in Firebase Storage and updated live!', type: 'success' });
+          setTimeout(() => {
+            onClose();
+          }, 1200);
+        } else {
+          setStatusMessage({ text: res.error || 'Failed to upload image to Firebase Storage.', type: 'error' });
+        }
+      } else if (finalImage) {
+        // Save URL
+        const res = await saveProjectMedia('hero_portrait', 'main', finalImage, 'image', {
+          title: 'Hero Profile Portrait',
+          description: 'Personal profile image of Aravind Shaw'
+        });
+
+        if (res.success) {
+          setStatusMessage({ text: 'Profile image updated successfully across the portfolio!', type: 'success' });
+          setTimeout(() => {
+            onClose();
+          }, 1200);
+        } else {
+          setStatusMessage({ text: res.error || 'Failed to save image. Please verify you are logged in.', type: 'error' });
+        }
       }
     } catch (err: any) {
       setStatusMessage({ text: err.message || 'An error occurred while saving.', type: 'error' });
@@ -385,6 +410,9 @@ export const ProfileUploadModal: React.FC<ProfileUploadModalProps> = ({ isOpen, 
                     src={activeDisplayImage}
                     alt="Aravind Shaw Portrait Preview"
                     className="w-full h-full object-cover object-center"
+                    onError={(e) => {
+                      e.currentTarget.src = '/images/aravind-portrait.jpg';
+                    }}
                   />
                   {previewUrl && (
                     <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-bold shadow-xs">

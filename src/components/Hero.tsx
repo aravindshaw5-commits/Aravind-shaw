@@ -140,6 +140,9 @@ export const Hero: React.FC = () => {
                     alt="Aravind Shaw — Motion Designer & Creative Director"
                     className="w-full h-full object-cover object-center transform group-hover/portrait:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      e.currentTarget.src = '/images/aravind-portrait.jpg';
+                    }}
                   />
 
                   {/* Owner Upload / Replace Action Badge */}

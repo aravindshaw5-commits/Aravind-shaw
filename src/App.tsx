@@ -12,6 +12,7 @@ import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
 import { OwnerLoginModal } from './components/OwnerLoginModal';
 import { AdminBar } from './components/AdminBar';
+import { AdminImageUploadModal } from './components/AdminImageUploadModal';
 import { AuthProvider } from './context/AuthContext';
 import { Project } from './types';
 
@@ -78,6 +79,9 @@ export default function App() {
 
         {/* Owner Private Login Modal */}
         <OwnerLoginModal />
+
+        {/* Dedicated Admin Firebase Image Upload Modal */}
+        <AdminImageUploadModal />
 
         {/* Floating Admin Status Bar for Authenticated Owner */}
         <AdminBar />

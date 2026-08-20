@@ -61,6 +61,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           } group-hover:scale-[1.02] transition-transform duration-500 ease-out`}
           referrerPolicy="no-referrer"
           loading="lazy"
+          onError={(e) => {
+            e.currentTarget.src = '/images/placeholder.svg';
+          }}
         />
 
         {/* Subtle Hover Overlay */}
