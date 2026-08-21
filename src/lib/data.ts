@@ -58,7 +58,7 @@ export const brandingProjects: Project[] = [
     category: 'Logo Design · Institutional Identity',
     categoryNumber: '01',
     description: 'Logo design created for an LC Lab at IIT Madras.',
-    image: iitMadrasLcLabLogo,
+    image: '/images/LC Lab 01.png',
     aspectRatio: 'portrait',
     tags: ['Logo Design', 'Institutional Identity', 'Visual Identity'],
     roles: ['Logo Design', 'Visual Identity'],
@@ -66,11 +66,11 @@ export const brandingProjects: Project[] = [
     details: {
       overview: 'Logo design created for an LC Lab at IIT Madras.',
       gallerySlots: [
-        { slotNumber: '01', title: 'PRIMARY LOGO', image: iitPost01 },
-        { slotNumber: '02', title: 'LOGO PRESENTATION', image: iitPost02 },
-        { slotNumber: '03', title: 'LOGO VARIATION', image: iitPost03 },
-        { slotNumber: '04', title: 'BRAND APPLICATION', image: iitPost04 },
-        { slotNumber: '05', title: 'FINAL BRAND SHOWCASE', image: iitPost05 }
+        { slotNumber: '01', title: 'PRIMARY LOGO', image: '/images/LC Lab 01.png' },
+        { slotNumber: '02', title: 'LOGO PRESENTATION', image: '/images/LC Lab 02.png' },
+        { slotNumber: '03', title: 'LOGO VARIATION', image: '/images/LC Lab 03.png' },
+        { slotNumber: '04', title: 'BRAND APPLICATION', image: '/images/LC Lab 04.png' },
+        { slotNumber: '05', title: 'FINAL BRAND SHOWCASE', image: '/images/LC Lab 05.png' }
       ]
     }
   },
@@ -80,7 +80,7 @@ export const brandingProjects: Project[] = [
     category: 'Logo Design · Creator Branding',
     categoryNumber: '01',
     description: 'Logo design created for the Beyond the Spelling Mistake channel associated with influencer Arun Fernandes.',
-    image: beyondSpellingMistakeLogo,
+    image: '/images/BTSM 01.png',
     aspectRatio: 'portrait',
     tags: ['Logo Design', 'Creator Branding', 'Visual Design'],
     roles: ['Logo Design', 'Creator Branding', 'Visual Design'],
@@ -88,11 +88,11 @@ export const brandingProjects: Project[] = [
     details: {
       overview: 'Logo identity created for the Beyond the Spelling Mistake channel associated with influencer Arun Fernandes.',
       gallerySlots: [
-        { slotNumber: '01', title: 'PRIMARY LOGO', image: btsmPost01 },
-        { slotNumber: '02', title: 'LOGO PRESENTATION', image: btsmPost02 },
-        { slotNumber: '03', title: 'LOGO VARIATION', image: btsmPost03 },
-        { slotNumber: '04', title: 'BRAND APPLICATION', image: btsmPost04 },
-        { slotNumber: '05', title: 'FINAL BRAND SHOWCASE', image: btsmPost05 }
+        { slotNumber: '01', title: 'PRIMARY LOGO', image: '/images/BTSM 01.png' },
+        { slotNumber: '02', title: 'LOGO PRESENTATION', image: '/images/BTSM 02.png' },
+        { slotNumber: '03', title: 'LOGO VARIATION', image: '/images/BTSM 03.png' },
+        { slotNumber: '04', title: 'BRAND APPLICATION', image: '/images/BTSM 04.png' },
+        { slotNumber: '05', title: 'FINAL BRAND SHOWCASE', image: '/images/BTSM 05.png' }
       ]
     }
   },
@@ -132,8 +132,8 @@ export const socialReelProjects: Project[] = [
     category: 'Social Media Reels',
     categoryNumber: '02',
     description: 'Fast-paced kinetic typography reel with rhythmic sound design and frame-perfect cutaways designed to maximize 3-second retention on Instagram.',
-    image: '/images/reels/reel-01.jpg',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    image: '/images/reels/05 Th.png',
+    videoUrl: '/Video/Kiera Knightley.mp4',
     aspectRatio: 'vertical',
     tags: ['Kinetic Type', '9:16 Format', 'Sound Design', 'High Retention'],
     client: 'Creator Studio',
