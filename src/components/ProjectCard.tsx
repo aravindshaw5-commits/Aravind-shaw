@@ -1,7 +1,6 @@
 import React from 'react';
 import { ArrowUpRight, Play, Eye, Sparkles } from 'lucide-react';
 import { Project } from '../types';
-import { useAuth } from '../context/AuthContext';
 
 interface ProjectCardProps {
   project: Project;
@@ -18,7 +17,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   featured = false,
   projectNumber
 }) => {
-  const { savedMedia } = useAuth();
   const isPortrait = project.aspectRatio === 'portrait' || aspect === 'portrait';
 
   const getAspectClass = () => {
@@ -38,10 +36,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   };
 
   const isReel = project.category === 'Social Media Reels' || aspect === 'vertical';
-  
-  // Use saved media from server/auth context if available, otherwise default project image
-  const serverSavedImg = savedMedia[`${project.id}_01`];
-  const displayImage = serverSavedImg || project.image;
+  const displayImage = project.image;
 
   return (
     <div

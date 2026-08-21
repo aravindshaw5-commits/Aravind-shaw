@@ -10,10 +10,6 @@ import { About } from './components/About';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
-import { OwnerLoginModal } from './components/OwnerLoginModal';
-import { AdminBar } from './components/AdminBar';
-import { AdminImageUploadModal } from './components/AdminImageUploadModal';
-import { AuthProvider } from './context/AuthContext';
 import { Project } from './types';
 
 export default function App() {
@@ -28,64 +24,53 @@ export default function App() {
   };
 
   return (
-    <AuthProvider>
-      <div className="min-h-screen bg-[#fafbfc] text-slate-900 flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
-        {/* Top Sticky Navigation */}
-        <Navbar />
+    <div className="min-h-screen bg-[#fafbfc] text-slate-900 flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
+      {/* Top Sticky Navigation */}
+      <Navbar />
 
-        {/* Hero Section */}
-        <main className="flex-1 space-y-24 sm:space-y-32">
-          <Hero />
+      {/* Hero Section */}
+      <main className="flex-1 space-y-24 sm:space-y-32">
+        <Hero />
 
-          {/* 01 to 08 Portfolio Categories in Exact Order:
-              01 — BRANDING & LOGO DESIGN (Summer, IIT Madras LC Lab, BTSM, Femilux)
-              02 — SOCIAL MEDIA REELS (8 vertical 9:16 short-form videos)
-              03 — PRODUCT VIDEOS (16:9 commercial showcases)
-              04 — 2D ANIMATION (540+ headline, exactly 7 projects)
-              05 — 3D DESIGN & ANIMATION
-              06 — CHARACTER DESIGN
-              07 — GRAPHIC & EDITORIAL DESIGN (MSDS publication)
-              08 — AI CREATIVE LAB
-          */}
-          <Work onSelectProject={handleSelectProject} />
+        {/* 01 to 08 Portfolio Categories in Exact Order:
+            01 — BRANDING & LOGO DESIGN
+            02 — SOCIAL MEDIA REELS
+            03 — PRODUCT VIDEOS
+            04 — 2D ANIMATION (540+ headline, exactly 7 projects)
+            05 — 3D DESIGN & ANIMATION
+            06 — CHARACTER DESIGN
+            07 — GRAPHIC & EDITORIAL DESIGN
+            08 — AI CREATIVE LAB
+        */}
+        <Work onSelectProject={handleSelectProject} />
 
-          {/* 09 — SHOWREEL */}
-          <Showreel />
+        {/* 09 — SHOWREEL */}
+        <Showreel />
 
-          {/* 10 — EXPERIENCE & 11 — EDUCATION */}
-          <Experience />
+        {/* 10 — EXPERIENCE & 11 — EDUCATION */}
+        <Experience />
 
-          {/* 12 — AWARD (Usain Bolt Award & Campaign) */}
-          <Award />
+        {/* 12 — AWARD (Usain Bolt Award & Campaign) */}
+        <Award />
 
-          {/* 13 — TOOLS & SOFTWARE */}
-          <Tools />
+        {/* 13 — TOOLS & SOFTWARE */}
+        <Tools />
 
-          {/* 14 — ABOUT */}
-          <About />
+        {/* 14 — ABOUT */}
+        <About />
 
-          {/* 15 — CONTACT */}
-          <Contact />
-        </main>
+        {/* 15 — CONTACT */}
+        <Contact />
+      </main>
 
-        {/* Footer */}
-        <Footer />
+      {/* Footer */}
+      <Footer />
 
-        {/* Project Details Modal */}
-        <ProjectModal
-          project={selectedProject}
-          onClose={handleCloseModal}
-        />
-
-        {/* Owner Private Login Modal */}
-        <OwnerLoginModal />
-
-        {/* Dedicated Admin Firebase Image Upload Modal */}
-        <AdminImageUploadModal />
-
-        {/* Floating Admin Status Bar for Authenticated Owner */}
-        <AdminBar />
-      </div>
-    </AuthProvider>
+      {/* Project Details Modal */}
+      <ProjectModal
+        project={selectedProject}
+        onClose={handleCloseModal}
+      />
+    </div>
   );
 }

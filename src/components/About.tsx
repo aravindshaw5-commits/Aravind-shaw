@@ -1,16 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { aboutData } from '../lib/data';
-import { Sparkles, CheckCircle2, Award, Film, Layers, Compass, ArrowUpRight, Camera } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { ProfileUploadModal } from './ProfileUploadModal';
+import { CheckCircle2, Compass, ArrowUpRight } from 'lucide-react';
 import aravindPortraitDefault from '../assets/images/Aravind image.png';
 
 export const About: React.FC = () => {
-  const { isAdmin, savedMedia } = useAuth();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const displayPortrait = savedMedia['hero_portrait_main'] || savedMedia['hero_portrait'] || aravindPortraitDefault;
-
   return (
     <section id="about" className="scroll-mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Heading */}
@@ -44,33 +37,20 @@ export const About: React.FC = () => {
                 <span>Motion with Purpose</span>
               </div>
 
-              {/* Compact Profile Picture & Owner Upload Trigger */}
+              {/* Profile Picture */}
               <div className="flex items-center gap-2.5">
                 <div 
-                  onClick={() => setIsModalOpen(true)}
-                  className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-emerald-200 shadow-2xs cursor-pointer group hover:scale-105 transition-transform"
-                  title="Click to replace profile picture"
+                  className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-emerald-200 shadow-2xs"
                 >
                   <img
-                    src={displayPortrait}
+                    src={aravindPortraitDefault}
                     alt="Aravind Shaw"
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.currentTarget.src = '/images/aravind-portrait.jpg';
                     }}
                   />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white">
-                    <Camera className="w-3.5 h-3.5" />
-                  </div>
                 </div>
-                {isAdmin && (
-                  <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 underline"
-                  >
-                    Edit Photo
-                  </button>
-                )}
               </div>
             </div>
 
@@ -145,11 +125,6 @@ export const About: React.FC = () => {
         </div>
 
       </div>
-
-      <ProfileUploadModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </section>
   );
 };
