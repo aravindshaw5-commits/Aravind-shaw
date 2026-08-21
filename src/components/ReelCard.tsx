@@ -32,7 +32,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({ reel, reelNumber }) => {
   const currentTitle = reel.title;
   const currentDescription = reel.description;
 
-  // Safe Click-To-Play Handler (NO AUTOPLAY)
+  // Safe Click-To-Play Handler (Directly plays the video element)
   const handleStartPlay = () => {
     if (!currentVideo || typeof currentVideo !== 'string' || currentVideo.trim() === '') {
       setVideoError('no_video');
@@ -40,18 +40,44 @@ export const ReelCard: React.FC<ReelCardProps> = ({ reel, reelNumber }) => {
     }
 
     setVideoError(null);
-    setIsBuffering(true);
-    setIsPlaying(true);
+    if (videoRef.current) {
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+            setIsBuffering(false);
+          })
+          .catch((err) => {
+            console.warn('Playback error:', err);
+            setIsBuffering(false);
+          });
+      }
+    }
   };
 
   // Stop playback and return to thumbnail state
   const handleStopPlay = () => {
     if (videoRef.current) {
       videoRef.current.pause();
+      try {
+        videoRef.current.currentTime = 0;
+      } catch {
+        // Ignore currentTime reset errors on unseekable streams
+      }
     }
     setIsPlaying(false);
     setIsBuffering(false);
     setVideoError(null);
+  };
+
+  // Toggle play/pause from footer button
+  const handleTogglePlay = () => {
+    if (isPlaying) {
+      handleStopPlay();
+    } else {
+      handleStartPlay();
+    }
   };
 
   // Safe Video Error Handler
@@ -78,52 +104,67 @@ export const ReelCard: React.FC<ReelCardProps> = ({ reel, reelNumber }) => {
       <div
         className="relative w-full aspect-[9/16] bg-slate-950 overflow-hidden select-none"
       >
-        {/* ==================================================== */}
-        {/* STATE 1: ACTIVE VIDEO PLAYER (When visitor clicked Play) */}
-        {/* ==================================================== */}
-        {isPlaying && !videoError ? (
-          <div className="relative w-full h-full bg-black flex items-center justify-center">
-            {/* Standard HTML5 Video Player with controls, playsInline, preload metadata, NO autoPlay */}
-            <video
-              ref={videoRef}
-              src={currentVideo}
-              poster={currentThumbnail}
-              controls
-              preload="metadata"
-              playsInline
-              className="w-full h-full object-cover"
-              onWaiting={() => setIsBuffering(true)}
-              onPlaying={() => setIsBuffering(false)}
-              onEnded={() => setIsPlaying(false)}
-              onError={handleVideoError}
-            />
+        {/* Single Underlying HTML5 Video Player (Controlled by both center & native buttons) */}
+        <video
+          ref={videoRef}
+          src={currentVideo || undefined}
+          poster={currentThumbnail}
+          controls
+          preload="metadata"
+          playsInline
+          className="w-full h-full object-cover"
+          onPlay={() => {
+            setIsPlaying(true);
+            setVideoError(null);
+          }}
+          onPlaying={() => {
+            setIsPlaying(true);
+            setIsBuffering(false);
+          }}
+          onPause={() => {
+            setIsPlaying(false);
+            setIsBuffering(false);
+          }}
+          onEnded={() => {
+            setIsPlaying(false);
+            setIsBuffering(false);
+          }}
+          onWaiting={() => {
+            if (isPlaying) {
+              setIsBuffering(true);
+            }
+          }}
+          onError={handleVideoError}
+        />
 
-            {/* Buffering Indicator */}
-            {isBuffering && (
-              <div className="absolute inset-0 pointer-events-none flex items-center justify-center bg-black/30">
-                <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
-              </div>
-            )}
-
-            {/* Back to Thumbnail Close Button */}
-            <button
-              onClick={handleStopPlay}
-              className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-full bg-slate-900/85 hover:bg-slate-900 text-white backdrop-blur-xs text-[11px] font-semibold flex items-center gap-1 transition-colors shadow-md cursor-pointer border border-white/20"
-              title="Close Video (Back to Thumbnail)"
-            >
-              <X className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Thumbnail</span>
-            </button>
+        {/* Buffering Indicator (Only shown when genuinely buffering during playback) */}
+        {isBuffering && isPlaying && !videoError && (
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center bg-black/30 z-20">
+            <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
           </div>
-        ) : (
-          /* ==================================================== */
-          /* STATE 2: DEFAULT THUMBNAIL (Show before play / fallback) */
-          /* ==================================================== */
+        )}
+
+        {/* Back to Thumbnail Close Button (When actively playing) */}
+        {isPlaying && !videoError && (
+          <button
+            onClick={handleStopPlay}
+            className="absolute top-3 right-3 z-30 px-2.5 py-1 rounded-full bg-slate-900/85 hover:bg-slate-900 text-white backdrop-blur-xs text-[11px] font-semibold flex items-center gap-1 transition-colors shadow-md cursor-pointer border border-white/20"
+            title="Close Video (Back to Thumbnail)"
+          >
+            <X className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Thumbnail</span>
+          </button>
+        )}
+
+        {/* ==================================================== */}
+        {/* THUMBNAIL & CENTER PLAY OVERLAY (When paused / stopped) */}
+        {/* ==================================================== */}
+        {!isPlaying && (
           <div
             onClick={handleStartPlay}
-            className="relative w-full h-full cursor-pointer group/thumb"
+            className="absolute inset-0 cursor-pointer group/thumb z-10"
           >
-            {/* 9:16 Thumbnail Image strictly used as image */}
+            {/* 9:16 Thumbnail Image */}
             <img
               src={currentThumbnail}
               alt={currentTitle}
@@ -151,7 +192,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({ reel, reelNumber }) => {
             {/* Error Message Overlays */}
             {videoError ? (
               <div
-                className="absolute inset-3 my-auto h-fit bg-slate-900/95 backdrop-blur-md text-white p-4 rounded-xl border border-slate-700/80 flex flex-col items-center text-center shadow-xl animate-fadeIn z-10"
+                className="absolute inset-3 my-auto h-fit bg-slate-900/95 backdrop-blur-md text-white p-4 rounded-xl border border-slate-700/80 flex flex-col items-center text-center shadow-xl animate-fadeIn z-20"
                 onClick={(e) => e.stopPropagation()}
               >
                 {videoError === 'no_video' ? (
@@ -245,7 +286,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({ reel, reelNumber }) => {
           <span className="font-medium text-slate-600">Instagram Reel</span>
           <button
             type="button"
-            onClick={isPlaying ? handleStopPlay : handleStartPlay}
+            onClick={handleTogglePlay}
             className="font-bold text-emerald-800 hover:text-emerald-900 flex items-center gap-1 transition-colors cursor-pointer"
           >
             <span>{isPlaying ? 'PAUSE' : 'PLAY REEL'}</span>
