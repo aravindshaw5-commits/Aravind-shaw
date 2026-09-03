@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18181b" />
+      <stop offset="60%" stop-color="#27272a" />
+      <stop offset="100%" stop-color="#05070c" />
+    </linearGradient>
+    <radialGradient id="glowGrad" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0" />
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1.5"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1920" fill="url(#bgGrad)" />
+  <rect width="1080" height="1920" fill="url(#grid)" />
+  <circle cx="540" cy="920" r="486" fill="url(#glowGrad)" />
+
+  <!-- Outer Frame -->
+  <rect x="40" y="40" width="1000" height="1840" rx="28" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2" />
+
+  <!-- Top Badge -->
+  <g transform="translate(80, 90)">
+    <rect x="0" y="0" width="220" height="38" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b" stroke-opacity="0.4" stroke-width="1.5" />
+    <text x="110" y="24" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Segoe UI', sans-serif" font-size="14" font-weight="800" fill="#f59e0b" letter-spacing="2" text-anchor="middle">
+      REEL 02
+    </text>
+  </g>
+
+  <!-- Center Graphic Elements -->
+  <g transform="translate(540, 840)" text-anchor="middle">
+    <!-- Outer Glow Ring -->
+    <circle cx="0" cy="0" r="180" fill="none" stroke="#f59e0b" stroke-opacity="0.2" stroke-width="3" stroke-dasharray="12 12" />
+    <circle cx="0" cy="0" r="140" fill="#f59e0b" fill-opacity="0.1" stroke="#f59e0b" stroke-opacity="0.5" stroke-width="2" />
+    
+    <!-- Central Play Symbol -->
+    <circle cx="0" cy="0" r="70" fill="#f59e0b" fill-opacity="0.9" />
+    <polygon points="-10,-16 16,0 -10,16" fill="#090d16" transform="scale(1.8)" />
+  </g>
+
+  <!-- Typography Content -->
+  <g transform="translate(540, 1540)" text-anchor="middle">
+    <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Segoe UI', sans-serif" font-size="48" font-weight="900" fill="#ffffff" letter-spacing="-0.5">
+      3D Cyber Watch Drop
+    </text>
+    
+    <text x="0" y="46" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Segoe UI', sans-serif" font-size="24" font-weight="500" fill="#94a3b8">
+      Octane Lighting & Macro Passes
+    </text>
+  </g>
+
+  <!-- Bottom Brand Mark -->
+  <g transform="translate(1000, 1860)" text-anchor="end">
+    <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#64748b" letter-spacing="2">
+      ARAVIND SHAW · MOTION PORTFOLIO
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="phGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#090d16" />
+    </linearGradient>
+    <pattern id="phGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#phGrad)" />
+  <rect width="100%" height="100%" fill="url(#phGrid)" />
+  
+  <g transform="translate(400, 270)" text-anchor="middle">
+    <!-- Clean Minimalist Graphic Frame Icon -->
+    <rect x="-44" y="-36" width="88" height="72" rx="14" fill="none" stroke="#475569" stroke-width="3" />
+    <circle cx="-16" cy="-10" r="8" fill="#38bdf8" opacity="0.8" />
+    <path d="M -32 20 L -6 -6 L 16 14 L 32 -2 L 40 18" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.8" />
+    
+    <text y="70" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="700" fill="#94a3b8" letter-spacing="2">
+      ARAVIND SHAW PORTFOLIO
+    </text>
+    <text y="92" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="500" fill="#64748b" letter-spacing="1">
+      Visual &amp; Motion Design Project
+    </text>
+  </g>
+</svg>
